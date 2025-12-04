@@ -1,13 +1,8 @@
-
-name: Genesys CX as Code Deployment
+name: "Genesys CX as Code Deployment"
 
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'Queue/**'
-      - 'Skill/**'
-      - 'Knowledge/**'
   workflow_dispatch:
     inputs:
       destroy:
@@ -33,28 +28,19 @@ jobs:
         with:
           terraform_version: 1.13.4
 
-      - name: Detect changed directories
-        id: changes
-        run: |
-          echo "changed=$(git diff --name-only HEAD~1 HEAD | grep -E '^(Queue|Skill|Knowledge)/' | cut -d/ -f1 | sort -u | tr '\n' ' ')" >> $GITHUB_OUTPUT
+      - name: Terraform Init
+        run: terraform init
 
-      - name: Show changed directories
-        run: echo "Changed directories: ${{ steps.changes.outputs.changed }}"
+      - name: Terraform Validate
+        run: terraform validate
 
-      - name: Run Terraform for changed directories
-        if: steps.changes.outputs.changed != ''
-        run: |
-          for dir in ${{ steps.changes.outputs.changed }}; do
-            echo "Processing $dir..."
-            cd $dir
-            terraform init
-            terraform validate
-            terraform plan -no-color
-            if [ "${{ github.event.inputs.destroy }}" != "true" ]; then
-              terraform apply -auto-approve
-            else
-              terraform destroy -auto-approve
-            fi
-            cd ..
-          done
+      - name: Terraform Plan
+        run: terraform plan -no-color
 
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event.inputs.destroy != 'true'
+        run: terraform apply -auto-approve
+
+      - name: Terraform Destroy
+        if: github.event.inputs.destroy == 'true'
+        run: terraform destroy -auto-approve
