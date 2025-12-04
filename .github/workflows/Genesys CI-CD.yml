@@ -6,7 +6,6 @@ on:
     branches: [ main ]
     paths:
       - 'queue/**'
-      - 'Queue/**'
       - 'skill/**'
       - 'Skill/**'
       - 'knowledge/**'
@@ -48,9 +47,9 @@ jobs:
       - name: Run Terraform for changed directories
         if: steps.changes.outputs.changed_dirs != ''
         run: |
-          for dir in ${{ steps.changes.outputs.changed_dirs }}; do
+          for dir in $(echo "${{ steps.changes.outputs.changed_dirs }}"); do
             echo "Processing $dir..."
-            cd $dir
+            cd "$dir"
             terraform init
             terraform validate
             terraform plan -no-color
