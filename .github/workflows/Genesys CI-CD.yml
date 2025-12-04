@@ -45,7 +45,7 @@ jobs:
         run: echo "Changed directories: ${{ steps.changes.outputs.changed_dirs }}"
 
       - name: Run Terraform for changed directories
-        if: steps.changes.outputs.changed_dirs != ''
+        if: ${{ steps.changes.outputs.changed_dirs != '' }}
         run: |
           for dir in $(echo "${{ steps.changes.outputs.changed_dirs }}"); do
             echo "Processing $dir..."
@@ -59,3 +59,4 @@ jobs:
               terraform destroy -auto-approve
             fi
             cd ..
+          done
