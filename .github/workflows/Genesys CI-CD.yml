@@ -2,7 +2,7 @@ name: "Genesys CX as Code Deployment"
 
 on:
   push:
-    branches: [ main ]
+    branches: [ Skill ]
   workflow_dispatch:
     inputs:
       destroy:
