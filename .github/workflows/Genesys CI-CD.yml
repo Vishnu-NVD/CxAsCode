@@ -1,1 +1,60 @@
 
+name: Genesys CX as Code Deployment
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'Queue/**'
+      - 'Skill/**'
+      - 'Knowledge/**'
+  workflow_dispatch:
+    inputs:
+      destroy:
+        description: 'Set to true to destroy all resources'
+        required: false
+        default: 'false'
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    env:
+      GENESYSCLOUD_OAUTHCLIENT_ID: ${{ secrets.GENESYSCLOUD_OAUTHCLIENT_ID }}
+      GENESYSCLOUD_OAUTHCLIENT_SECRET: ${{ secrets.GENESYSCLOUD_OAUTHCLIENT_SECRET }}
+      GENESYSCLOUD_REGION: ${{ secrets.GENESYSCLOUD_REGION }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.13.4
+
+      - name: Detect changed directories
+        id: changes
+        run: |
+          echo "changed=$(git diff --name-only HEAD~1 HEAD | grep -E '^(Queue|Skill|Knowledge)/' | cut -d/ -f1 | sort -u | tr '\n' ' ')" >> $GITHUB_OUTPUT
+
+      - name: Show changed directories
+        run: echo "Changed directories: ${{ steps.changes.outputs.changed }}"
+
+      - name: Run Terraform for changed directories
+        if: steps.changes.outputs.changed != ''
+        run: |
+          for dir in ${{ steps.changes.outputs.changed }}; do
+            echo "Processing $dir..."
+            cd $dir
+            terraform init
+            terraform validate
+            terraform plan -no-color
+            if [ "${{ github.event.inputs.destroy }}" != "true" ]; then
+              terraform apply -auto-approve
+            else
+              terraform destroy -auto-approve
+            fi
+            cd ..
+          done
+
