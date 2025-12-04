@@ -1,19 +1,21 @@
-
 name: Genesys CX as Code Deployment
 
 on:
   push:
     branches: [ main ]
+    # Case-insensitive matching using glob expansion
     paths:
       - 'queue/**'
+      - 'Queue/**'
       - 'skill/**'
       - 'Skill/**'
       - 'knowledge/**'
       - 'Knowledge/**'
+
   workflow_dispatch:
     inputs:
       destroy:
-        description: 'Set to true to destroy all resources'
+        description: 'Set to true to destroy changed directory resources'
         required: false
         default: 'false'
 
@@ -29,16 +31,20 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.13.4
+          fetch-depth: 0   # FIX: required for correct diff detection
 
       - name: Detect changed directories (case-insensitive)
         id: changes
+        shell: bash
         run: |
-          dirs=$(git diff --name-only origin/main...HEAD | grep -Ei '^(queue|skill|knowledge)/' | cut -d/ -f1 | sort -u | tr '\n' ' ')
+          set -e
+          # Collect top-level dirs that changed under queue/, skill/, knowledge/
+          dirs=$(git diff --name-only origin/main...HEAD \
+            | grep -Ei '^(queue|skill|knowledge)/' \
+            | cut -d/ -f1 \
+            | sort -u | tr '\n' ' ')
+
           echo "changed_dirs=$dirs" >> $GITHUB_OUTPUT
 
       - name: Show changed directories
@@ -46,17 +52,38 @@ jobs:
 
       - name: Run Terraform for changed directories
         if: ${{ steps.changes.outputs.changed_dirs != '' }}
+        shell: bash
         run: |
-          for dir in $(echo "${{ steps.changes.outputs.changed_dirs }}"); do
-            echo "Processing $dir..."
+          set -euo pipefail
+
+          for dir in ${{ steps.changes.outputs.changed_dirs }}; do
+            echo "──────────────────────────────────────"
+            echo "Processing directory: $dir"
+            echo "──────────────────────────────────────"
+
             cd "$dir"
-            terraform init
-            terraform validate
+
+            # Initialize
+            terraform init -no-color
+
+            # Validate
+            terraform validate -no-color
+
+            # Plan
             terraform plan -no-color
-            if [ "${{ github.event.inputs.destroy }}" != "true" ]; then
-              terraform apply -auto-approve
+
+            # Apply / Destroy
+            if [ "${{ github.event.inputs.destroy }}" = "true" ]; then
+              echo "Destroying resources in $dir"
+              terraform destroy -auto-approve -no-color
             else
-              terraform destroy -auto-approve
+              echo "Applying resources in $dir"
+              terraform apply -auto-approve -no-color
             fi
-            cd ..
+
+            cd - >/dev/null
           done
+
+      - name: No changes detected
+        if: ${{ steps.changes.outputs.changed_dirs == '' }}
+        run: echo "No Terraform directories changed. Skipping deployment."
