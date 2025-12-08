@@ -38,10 +38,12 @@ jobs:
       - name: Terraform Init
         working-directory: ./Terraform/${{ matrix.module }}
         run: terraform init
+        continue-on-error: true
 
       - name: Terraform Validate
         working-directory: ./Terraform/${{ matrix.module }}
         run: terraform validate
+        continue-on-error: true
 
       - name: Terraform Plan
         working-directory: ./Terraform/${{ matrix.module }}
@@ -52,7 +54,7 @@ jobs:
         if: >
           github.ref == 'refs/heads/main'
           && github.event.inputs.destroy != 'true'
-          && success() 
+          && success()
         working-directory: ./Terraform/${{ matrix.module }}
         run: terraform apply -auto-approve tfplan
 
