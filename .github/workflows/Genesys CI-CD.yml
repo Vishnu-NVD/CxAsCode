@@ -56,4 +56,3 @@ jobs:
         if: github.event.inputs.destroy == 'true'
         working-directory: ./Terraform/${{ matrix.module }}
         run: terraform destroy -auto-approve
-troy -auto-approve
