@@ -45,12 +45,12 @@ jobs:
 
       - name: Terraform Plan
         working-directory: ./Terraform/${{ matrix.module }}
-        run: terraform plan -no-color
+        run: terraform plan -no-color -out=tfplan
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event.inputs.destroy != 'true'
         working-directory: ./Terraform/${{ matrix.module }}
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve tfplan
 
       - name: Terraform Destroy
         if: github.event.inputs.destroy == 'true'
