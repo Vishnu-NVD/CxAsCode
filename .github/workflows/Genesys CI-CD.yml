@@ -1,20 +1,12 @@
-name: Genesys CX as Code Deployment
+name: "Genesys CX as Code Deployment"
 
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'queue/**'
-      - 'Queue/**'
-      - 'skill/**'
-      - 'Skill/**'
-      - 'knowledge/**'
-      - 'Knowledge/**'
-
   workflow_dispatch:
     inputs:
       destroy:
-        description: 'Set to true to destroy changed directory resources'
+        description: 'Set to true to destroy all resources'
         required: false
         default: 'false'
 
@@ -26,82 +18,29 @@ jobs:
       GENESYSCLOUD_OAUTHCLIENT_ID: ${{ secrets.GENESYSCLOUD_OAUTHCLIENT_ID }}
       GENESYSCLOUD_OAUTHCLIENT_SECRET: ${{ secrets.GENESYSCLOUD_OAUTHCLIENT_SECRET }}
       GENESYSCLOUD_REGION: ${{ secrets.GENESYSCLOUD_REGION }}
-      # Bring the workflow_dispatch input into the job env to avoid interpolation issues inside run blocks
-      DESTROY_FLAG: ${{ github.event.inputs.destroy }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
         with:
-          fetch-depth: 0
+          terraform_version: 1.13.4
 
-      - name: Detect changed directories (case-insensitive)
-        id: changes
-        shell: bash
-        run: |
-          set -euo pipefail
+      - name: Terraform Init
+        run: terraform init
 
-          # Get files changed between origin/main and HEAD
-          files=$(git diff --name-only origin/main...HEAD || true)
+      - name: Terraform Validate
+        run: terraform validate
 
-          # Extract top-level directories matching queue/ skill/ knowledge/ (case-insensitive)
-          dirs=$(printf '%s\n' "$files" \
-            | grep -Ei '^(queue|skill|knowledge)/' || true \
-            | cut -d/ -f1 \
-            | sort -u \
-            | tr '\n' ' ')
+      - name: Terraform Plan
+        run: terraform plan -no-color
 
-          # If dirs is empty, set to empty string explicitly
-          dirs="${dirs:-}"
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event.inputs.destroy != 'true'
+        run: terraform apply -auto-approve
 
-          echo "changed_dirs=$dirs" >> "$GITHUB_OUTPUT"
-
-      - name: Show changed directories
-        run: |
-          echo "Changed directories: '${{ steps.changes.outputs.changed_dirs }}'"
-
-      - name: Run Terraform for changed directories
-        if: ${{ steps.changes.outputs.changed_dirs != '' }}
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          # Safely read the GitHub output into a shell variable (quote it)
-          CHANGED_DIRS="${{ steps.changes.outputs.changed_dirs }}"
-
-          echo "Will process directories: '${CHANGED_DIRS}'"
-          for dir in $CHANGED_DIRS; do
-            echo
-            echo "──────────────────────────────────────"
-            echo "Processing directory: $dir"
-            echo "──────────────────────────────────────"
-
-            # Guard: directory exists
-            if [ ! -d "$dir" ]; then
-              echo "Directory '$dir' not found; skipping."
-              continue
-            fi
-
-            pushd "$dir" >/dev/null
-
-            # Initialize terraform (assumes backend config present in each dir or handled via env)
-            terraform init -no-color
-
-            # Validate and plan
-            terraform validate -no-color
-            terraform plan -no-color
-
-            if [ "${DESTROY_FLAG:-false}" = "true" ]; then
-              echo "Destroying resources in $dir"
-              terraform destroy -auto-approve -no-color
-            else
-              echo "Applying resources in $dir"
-              terraform apply -auto-approve -no-color
-            fi
-
-            popd >/dev/null
-          done
-
-      - name: No changes detected
-        if: ${{ steps.changes.outputs.changed_dirs == '' }}
-        run: echo "No Terraform directories changed. Skipping deployment."
+      - name: Terraform Destroy
+        if: github.event.inputs.destroy == 'true'
+        run: terraform destroy -auto-approve
