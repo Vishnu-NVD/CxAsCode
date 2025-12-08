@@ -2,7 +2,10 @@ name: "Genesys CX as Code Deployment"
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+    paths:
+      - 'Terraform/**'
   workflow_dispatch:
     inputs:
       destroy:
