@@ -19,7 +19,7 @@ jobs:
 
     strategy:
       matrix:
-        module: [Skill, Knowledge]   # Add more modules here
+        module: [Knowledge]   # Add more modules here
 
     env:
       GENESYSCLOUD_OAUTHCLIENT_ID: ${{ secrets.GENESYSCLOUD_OAUTHCLIENT_ID }}
