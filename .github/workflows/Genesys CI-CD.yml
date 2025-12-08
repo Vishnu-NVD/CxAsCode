@@ -46,9 +46,13 @@ jobs:
       - name: Terraform Plan
         working-directory: ./Terraform/${{ matrix.module }}
         run: terraform plan -no-color -out=tfplan
+        continue-on-error: true
 
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event.inputs.destroy != 'true'
+        if: >
+          github.ref == 'refs/heads/main'
+          && github.event.inputs.destroy != 'true'
+          && success() 
         working-directory: ./Terraform/${{ matrix.module }}
         run: terraform apply -auto-approve tfplan
 
