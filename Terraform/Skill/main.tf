@@ -12,5 +12,6 @@ terraform {
       prefix = "CI_CD"
     }
  }
+}
 
 provider "genesyscloud" {}
