@@ -3,7 +3,7 @@ name: "Genesys CX as Code Deployment"
 on:
   push:
     branches:
-      - main
+      - main_queue
     paths:
       - 'Terraform/**'
   workflow_dispatch:
@@ -19,7 +19,7 @@ jobs:
 
     strategy:
       matrix:
-        module: [Knowledge]   # Add more modules here
+        module: [Skill]   # Add more modules here
 
     env:
       GENESYSCLOUD_OAUTHCLIENT_ID: ${{ secrets.GENESYSCLOUD_OAUTHCLIENT_ID }}
@@ -50,7 +50,7 @@ jobs:
 
       - name: Terraform Apply
         if: >
-          github.ref == 'refs/heads/main'
+          github.ref == 'refs/heads/main_queue'
           && github.event.inputs.destroy != 'true'
           && always()
         working-directory: ./Terraform/${{ matrix.module }}
