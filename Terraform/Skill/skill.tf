@@ -1,3 +1,3 @@
 resource "genesyscloud_routing_skill" "skill" {
-  name = "CI-CD_New_4"
+  name = "CI-CD_New_5"
 }
