@@ -4,7 +4,7 @@ terraform {
     organization = "Cx_As_Code" 
 
     workspaces { 
-      name = "Knowledge" 
+      name = "CI_CD" 
     } 
   } 
 
