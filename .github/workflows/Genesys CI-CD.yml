@@ -44,19 +44,22 @@ jobs:
         working-directory: ./Terraform/${{ matrix.module }}
         run: terraform validate
 
-      - name: Terraform Plan
+      - name: Terraform Plan (Apply)
+        if: startsWith(github.ref, 'refs/heads/main') && !contains(github.event.head_commit.message, '[destroy]')
         working-directory: ./Terraform/${{ matrix.module }}
         run: terraform plan -no-color -out=tfplan
 
       - name: Terraform Apply
-        if: >
-          github.ref == 'refs/heads/main'
-          && github.event.inputs.destroy != 'true'
-          && always()
+        if: startsWith(github.ref, 'refs/heads/main') && !contains(github.event.head_commit.message, '[destroy]')
         working-directory: ./Terraform/${{ matrix.module }}
         run: terraform apply -auto-approve tfplan
 
-      - name: Terraform Destroy
-        if: github.event.inputs.destroy == 'true'
+      # ---------- PLAN (DESTROY) ----------
+      - name: Terraform Plan (Destroy)
+        if: contains(github.event.head_commit.message, '[destroy]')
         working-directory: ./Terraform/${{ matrix.module }}
-        run: terraform destroy -auto-approve
+        run: terraform plan -destroy -no-color -out=tfplan-destroy
+
+      - name: Terraform Destroy
+        if: contains(github.event.head_commit.message, '[destroy]')
+        working-directory: ./Terraform/${{ matrix.module }}
