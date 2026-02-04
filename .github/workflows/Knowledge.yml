@@ -1,4 +1,4 @@
-name: "Genesys CX as Code Deployment"
+name: "Knowledge Base Deployment"
 
 on:
   push:
