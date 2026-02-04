@@ -1,7 +1,7 @@
 terraform {
 cloud { 
     
-    organization = "Knowledge_TF" 
+    organization = "Genesys_Cloud" 
 
     workspaces { 
       name = "Knowledge" 
