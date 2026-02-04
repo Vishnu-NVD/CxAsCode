@@ -1,0 +1,47 @@
+
+name: Publish Architect Flows 
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'Flows/**'
+  workflow_dispatch:  # optional manual trigger
+
+jobs:
+  publish-prod:
+    runs-on: ubuntu-latest
+    env:
+      ARCHY_VERSION: "latest"    # pin to a version if needed
+      FLOWS_DIR: "Flows"
+      PROD_LOCATION: "usw2.pure.cloud"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Archy
+        uses: stsmdt/setup-genesyscloud-archy@v1
+        with:
+          archy-version: ${{ env.ARCHY_VERSION }}
+
+      - name: Export PROD credentials
+        run: |
+          echo "CLIENT_ID=${{ secrets.PROD_CLIENT_ID }}" >> $GITHUB_ENV
+          echo "CLIENT_SECRET=${{ secrets.PROD_CLIENT_SECRET }}" >> $GITHUB_ENV
+          echo "LOCATION=${{ env.PROD_LOCATION }}" >> $GITHUB_ENV
+
+      - name: Publish flows to PROD
+        run: |
+          set -e
+          for f in $(ls -1 "${{ env.FLOWS_DIR }}"/*.yaml); do
+            echo "Publishing: $f"
+            archy publish \
+              --file "$f" \
+              --location "$LOCATION" \
+              --clientId "$CLIENT_ID" \
+              --clientSecret "$CLIENT_SECRET"
+          done
+
+      - name: Summary
+        run: echo "Published flows in '${{ env.FLOWS_DIR }}' to PROD ($LOCATION)."
