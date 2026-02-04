@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'Terraform/**'
+      - 'Terraform/Skill/**'
   workflow_dispatch:
     inputs:
       destroy:
