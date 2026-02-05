@@ -5,7 +5,6 @@ resource "genesyscloud_routing_queue" "Queue" {
     mode                      = "AgentFirst"
     alerting_timeout_sec      = 30
     auto_end_delay_seconds    = 300
-    enable_auto_dial_and_end  = false
     service_level_duration_ms = 20000
     service_level_percentage  = 0.8
     auto_dial_delay_seconds   = 300
