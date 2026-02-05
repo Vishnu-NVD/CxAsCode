@@ -1,4 +1,4 @@
-resource "genesyscloud_routing_queue" "example" {
+resource "genesyscloud_routing_queue" "Queue" {
   name = "Example Queue_CICD"
   media_settings_callback {
     enable_auto_answer        = false
