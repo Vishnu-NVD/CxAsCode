@@ -1,4 +1,4 @@
 resource "genesyscloud_routing_skill" "skill" {
-  name = "CI-CD_Skill_Demo"
+  name = "CI-CD_Skill_Demo1"
 }
 
