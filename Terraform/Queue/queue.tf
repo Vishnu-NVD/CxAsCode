@@ -38,5 +38,4 @@ resource "genesyscloud_routing_queue" "Queue" {
     alerting_timeout_sec      = 300
     enable_auto_answer        = false
   }
-  ...
 }
