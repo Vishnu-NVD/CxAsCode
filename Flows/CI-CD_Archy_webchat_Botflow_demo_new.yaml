@@ -1,0 +1,566 @@
+digitalBot:
+  name: CI-CD_Archy_webchat_Botflow_demo_new
+  description: demoflow
+  division: Home
+  startUpRef: "/digitalBot/bots/bot[Initial Greeting_10]"
+  defaultLanguage: en-us
+  supportedLanguages:
+    en-us:
+      defaultLanguageSkill:
+        noValue: true
+  variables:
+    - stringVariable:
+        name: Slot.Email
+        initialValue:
+          noValue: true
+        isInput: true
+        isOutput: true
+    - stringVariable:
+        name: Slot.FirstName
+        initialValue:
+          noValue: true
+        isInput: true
+        isOutput: true
+    - stringVariable:
+        name: Slot.LastName
+        initialValue:
+          noValue: true
+        isInput: true
+        isOutput: true
+    - stringVariable:
+        name: Slot.Phone
+        initialValue:
+          noValue: true
+        isInput: true
+        isOutput: true
+    - stringVariable:
+        name: Slot.Price
+        initialValue:
+          noValue: true
+        isInput: true
+        isOutput: true
+    - stringVariable:
+        name: Slot.Query
+        initialValue:
+          noValue: true
+        isInput: true
+        isOutput: true
+  settingsErrorHandling:
+    errorHandling:
+      exit:
+        none: true
+    enableAgentEscalation:
+      lit: true
+    errorEventHandover:
+      exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Sorry, an error occurred. One moment, please, while I put you through to someone who can help.\")))"
+    agentEscalationConfirmation:
+      exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"You want to speak to an advisor. Is that correct?\")))"
+    agentEscalationHandover:
+      exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"One moment, please, and I will put you through to someone.\")))"
+    recognitionFailureEventHandover:
+      exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Sorry, I'm having trouble understanding you. One moment, please, while I put you through to someone who can help.\")))"
+    recognitionFailureEventHandling:
+      exit:
+        none: true
+    agentEscalationHandling:
+      exit:
+        none: true
+  settingsBotFlow:
+    none: true
+  settingsUserInput:
+    noMatchesMax:
+      lit: 3
+    noInputsMax:
+      lit: 3
+    noInputsTimeout:
+      lit:
+        minutes: 1
+    endOfSessionMessage:
+      exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"I have not heard from you in a while, so I am closing this chat, please come back if you need my help again. Thank you.\")))"
+    confirmationRejectionsMax:
+      lit: 3
+    collectionLowConfidenceThreshold:
+      lit: 20
+    collectionHighConfidenceThreshold:
+      lit: 70
+    confirmationLowConfidenceThreshold:
+      lit: 40
+    noMatchApology:
+      exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Sorry.\")))"
+    noInputApology:
+      exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Sorry, I didn't receive any input from you.\")))"
+    noToConfirmationApology:
+      exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"My mistake.\")))"
+    confirmationNoMatchApology:
+      exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Sorry, please input \\\"Yes\\\" or \\\"No\\\".\")))"
+    confirmationNoInputApology:
+      exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Sorry, I didn't receive any input from you.  Please input \\\"Yes\\\" or \\\"No\\\".\")))"
+  settingsKnowledge:
+    KB_Trekker Bikes:
+      maxNumOfAnswersReturned:
+        lit: 3
+      knowledgeInitialResponseFollowup:
+        exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"I hope I answered your question.  You can ask anything else you might want to know.\")))"
+      knowledgePathMode:
+        lit: statement
+      knowledgeInitialResponseSingle:
+        noValue: true
+      knowledgeInitialResponseMulti:
+        exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"To help me clarify your goal, please choose a number from the following list:\")))"
+      knowledgeInitialResponseMultiRetry:
+        exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Please choose a number, for example '1'.\\nHere's the list of options again:\")))"
+      knowledgeNoMatch:
+        exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"None of these\")))"
+      sendKnowledgeFeedback:
+        lit: true
+      knowledgeConfirmation:
+        exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Did this answer your question?\")))"
+      responseBias:
+        lit: neutral
+      knowledgeSettingsMode:
+        lit: standard
+  bots:
+    - bot:
+        name: Initial Greeting
+        refId: Initial Greeting_10
+        actions:
+          - communicate:
+              name: Communicate
+              communication:
+                exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Please fill the below details to chat with TrekkerBike Specialist.\")))"
+          - askForSlot:
+              name: Ask for First Name
+              slot:
+                name: FirstName
+              question:
+                exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Enter your First Name\")))"
+              customValidation:
+                noValue: true
+              confirmationMode:
+                lit: never
+              noMatch:
+                exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Please give me the first name\")))"
+              outputs:
+                maxNoInputs:
+                  enabled: false
+                maxNoMatches:
+                  enabled: false
+          - askForSlot:
+              name: Ask for Last Name
+              slot:
+                name: LastName
+              question:
+                exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Enter your Last Name\")))"
+              customValidation:
+                noValue: true
+              confirmationMode:
+                lit: never
+              noMatch:
+                exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Please give me the last name\")))"
+              outputs:
+                maxNoInputs:
+                  enabled: false
+                maxNoMatches:
+                  enabled: false
+          - askForSlot:
+              name: Ask for Email
+              slot:
+                name: Email
+              question:
+                exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Enter your Email\")))"
+              customValidation:
+                noValue: true
+              confirmationMode:
+                lit: never
+              noMatch:
+                exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Please give me your email\")))"
+              outputs:
+                maxNoInputs:
+                  enabled: false
+                maxNoMatches:
+                  enabled: false
+          - askForSlot:
+              name: Ask for Phone
+              slot:
+                name: Phone
+              question:
+                exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Enter your Phone Number\")))"
+              customValidation:
+                noValue: true
+              confirmationMode:
+                lit: never
+              noMatch:
+                exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Please give me the phone number\")))"
+              outputs:
+                maxNoInputs:
+                  enabled: false
+                maxNoMatches:
+                  enabled: false
+          - digitalMenu:
+              name: Category
+              question:
+                exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Category\")))"
+              noMatch:
+                exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Tell me again what you would like to do.\")))"
+              selection:
+                noValue: true
+              knowledgeSearchResult:
+                noValue: true
+              chooser:
+                lit:
+                  presentation:
+                    lit: quickReplies
+                  carousel:
+                    lit:
+                      cards:
+                        lit: []
+                  quickReplies:
+                    lit:
+                      buttons:
+                        lit:
+                          - lit:
+                              label:
+                                noValue: true
+                              value:
+                                lit: Sales
+                              type:
+                                lit: postback
+                          - lit:
+                              label:
+                                noValue: true
+                              value:
+                                lit: Support
+                              type:
+                                lit: postback
+                      quickReplySummary:
+                        noValue: true
+                  listPicker:
+                    lit:
+                      sections:
+                        lit:
+                          - lit:
+                              title:
+                                lit: Section
+                              multiSelectEnabled:
+                                lit: false
+                              items:
+                                lit: []
+                      receivedMessageImage:
+                        noValue: true
+                      receivedMessageTitle:
+                        lit: ""
+                      receivedMessageSubtitle:
+                        noValue: true
+                      receivedMessageButtonText:
+                        noValue: true
+                      replyMessageImage:
+                        noValue: true
+                      replyMessageSubtitle:
+                        noValue: true
+              outputs:
+                maxNoInputs:
+                  enabled: false
+                maxNoMatches:
+                  enabled: false
+          - getParticipantData:
+              name: Get Participant Data
+              attributes:
+                - attribute:
+                    name:
+                      lit: Name
+                    variable: Slot.FirstName
+                - attribute:
+                    name:
+                      lit: Email
+                    variable: Slot.Email
+                - attribute:
+                    name:
+                      lit: Phone
+                    variable: Slot.Phone
+          - communicate:
+              name: Communicate
+              communication:
+                exp: "MakeCommunication(\n  ToCommunication(MakeCommunication(\"Hello \", Slot.FirstName, \", Welcome to Trekker Bikes!!\")))"
+          - askForSlot:
+              name: Ask for Query
+              slot:
+                name: Query
+              question:
+                exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"How can I help you?\")))"
+              customValidation:
+                noValue: true
+              confirmationMode:
+                lit: never
+              noMatch:
+                exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Please ask anything\")))"
+              outputs:
+                maxNoInputs:
+                  enabled: false
+                maxNoMatches:
+                  enabled: false
+          - communicate:
+              name: Communicate
+              communication:
+                exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Sure!! I can help you with that.\")))"
+          - digitalMenu:
+              name: Bike Type
+              question:
+                exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\" Are you looking for a Men's, Women's, or Kid's bike?\")))"
+              noMatch:
+                exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Tell me again what you would like to do.\")))"
+              selection:
+                noValue: true
+              knowledgeSearchResult:
+                noValue: true
+              chooser:
+                lit:
+                  presentation:
+                    lit: quickReplies
+                  carousel:
+                    lit:
+                      cards:
+                        lit: []
+                  quickReplies:
+                    lit:
+                      buttons:
+                        lit:
+                          - lit:
+                              label:
+                                noValue: true
+                              value:
+                                lit: Men's
+                              type:
+                                lit: postback
+                          - lit:
+                              label:
+                                noValue: true
+                              value:
+                                lit: Women's
+                              type:
+                                lit: postback
+                          - lit:
+                              label:
+                                noValue: true
+                              value:
+                                lit: Kid's
+                              type:
+                                lit: postback
+                      quickReplySummary:
+                        noValue: true
+                  listPicker:
+                    lit:
+                      sections:
+                        lit:
+                          - lit:
+                              title:
+                                lit: Section
+                              multiSelectEnabled:
+                                lit: false
+                              items:
+                                lit: []
+                      receivedMessageImage:
+                        noValue: true
+                      receivedMessageTitle:
+                        lit: ""
+                      receivedMessageSubtitle:
+                        noValue: true
+                      receivedMessageButtonText:
+                        noValue: true
+                      replyMessageImage:
+                        noValue: true
+                      replyMessageSubtitle:
+                        noValue: true
+              outputs:
+                maxNoInputs:
+                  enabled: false
+                maxNoMatches:
+                  enabled: false
+          - askForSlot:
+              name: Ask for Price
+              slot:
+                name: Price
+              question:
+                exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"What is your price range?\")))"
+              customValidation:
+                noValue: true
+              confirmationMode:
+                lit: never
+              noMatch:
+                exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Please give me the price\")))"
+              outputs:
+                maxNoInputs:
+                  enabled: false
+                maxNoMatches:
+                  enabled: false
+          - communicate:
+              name: Communicate
+              communication:
+                exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Not a problem. Based on these details, It looks like the Marlin 6 Bike is the best fit for your needs. Here is some more product info: [https://youtu.be/XqbwlORsEG ]\")))"
+          - digitalMenu:
+              name: Agent Transfer
+              question:
+                exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\" Let me transfer you to a bike specialist who can assist you further\")))"
+              noMatch:
+                exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Tell me again what you would like to do.\")))"
+              selection:
+                noValue: true
+              knowledgeSearchResult:
+                noValue: true
+              chooser:
+                lit:
+                  presentation:
+                    lit: quickReplies
+                  carousel:
+                    lit:
+                      cards:
+                        lit: []
+                  quickReplies:
+                    lit:
+                      buttons:
+                        lit:
+                          - lit:
+                              label:
+                                noValue: true
+                              value:
+                                lit: Agent
+                              type:
+                                lit: postback
+                      quickReplySummary:
+                        noValue: true
+                  listPicker:
+                    lit:
+                      sections:
+                        lit:
+                          - lit:
+                              title:
+                                lit: Section
+                              multiSelectEnabled:
+                                lit: false
+                              items:
+                                lit: []
+                      receivedMessageImage:
+                        noValue: true
+                      receivedMessageTitle:
+                        lit: ""
+                      receivedMessageSubtitle:
+                        noValue: true
+                      receivedMessageButtonText:
+                        noValue: true
+                      replyMessageImage:
+                        noValue: true
+                      replyMessageSubtitle:
+                        noValue: true
+              outputs:
+                maxNoInputs:
+                  enabled: false
+                maxNoMatches:
+                  enabled: false
+                paths:
+                  - path:
+                      name: Agent
+                      actions:
+                        - setScreenPop:
+                            name: Set Screen Pop
+                            screenPopScript:
+                              TrekkerBikes:
+                                inputs:
+                                  First:
+                                    exp: Slot.FirstName
+                                  Last:
+                                    exp: Slot.LastName
+                                  Mail:
+                                    exp: Slot.Email
+                                  Phone:
+                                    exp: Slot.Phone
+                        - transferToAcd:
+                            name: Transfer to ACD
+                            targetQueue:
+                              lit:
+                                name: Trekker Bikes
+                            preTransferCommunication:
+                              exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Thank you for contacting Trekker Bikes, please wait while I transfer you to an agent\")))"
+                            failureTransferCommunication:
+                              exp: "MakeCommunication(\n  ToCommunication(ToCommunication(\"Sorry, there is no agent available at the moment. We will call you back shortly.\\nThank you! Have a good day!\")))"
+                            priority:
+                              lit: 0
+                            preferredAgents:
+                              noValue: true
+                            languageSkill:
+                              noValue: true
+                            directAgent:
+                              noValue: true
+                            failureOutputs:
+                              errorType:
+                                noValue: true
+                              errorMessage:
+                                noValue: true
+          - disconnect:
+              name: Disconnect
+  settingsNaturalLanguageUnderstanding:
+    nluDomainVersion:
+      intents: []
+      entities:
+        - name: Email
+          type: EmailType
+        - name: FirstName
+          type: FirstNameType
+        - name: LastName
+          type: LastNameType
+        - name: Phone
+          type: PhoneType
+        - name: Price
+          type: PriceType
+        - name: Query
+          type: QueryType
+      entityTypes:
+        - name: EmailType
+          description: The description of the Entity Type "EmailType"
+          mechanism:
+            type: Regex
+            restricted: true
+            items:
+              - value: "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$"
+                synonyms: []
+        - name: FirstNameType
+          description: The description of the Entity Type "FirstNameType"
+          mechanism:
+            type: Regex
+            restricted: true
+            items:
+              - value: "^[a-zA-Z0-9\\s!@#$%^&*()_+\\-=[\\]{};':\"\\\\|,.<>/? ]+$"
+                synonyms: []
+        - name: LastNameType
+          description: The description of the Entity Type "LastNameType"
+          mechanism:
+            type: Regex
+            restricted: true
+            items:
+              - value: "^[a-zA-Z0-9\\s!@#$%^&*()_+\\-=[\\]{};':\"\\\\|,.<>/? ]+$"
+                synonyms: []
+        - name: PhoneType
+          description: The description of the Entity Type "PhoneType"
+          mechanism:
+            type: Regex
+            restricted: true
+            items:
+              - value: "\\b[0-9]*\\b"
+                synonyms: []
+        - name: PriceType
+          description: The description of the Entity Type "PriceType"
+          mechanism:
+            type: Regex
+            restricted: true
+            items:
+              - value: "^[a-zA-Z0-9\\s!@#$%^&*()_+\\-=[\\]{};':\"\\\\|,.<>/? ]+$"
+                synonyms: []
+        - name: QueryType
+          description: The description of the Entity Type "QueryType"
+          mechanism:
+            type: Regex
+            restricted: true
+            items:
+              - value: "^[a-zA-Z0-9\\s!@#$%^&*()_+\\-=[\\]{};':\"\\\\|,.<>/? ]+$"
+                synonyms: []
+      language: en-us
+      languageVersions: {}
+    mutedUtterances: []
