@@ -1,5 +1,5 @@
 inboundCall:
-  name: Architect_flow_demo_1
+  name: Architect_flow_demo_2
   description: This flow is for testing. Do not make changes
   division: Home
   startUpRef: "/inboundCall/tasks/task[New Task 1_13]"
