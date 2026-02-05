@@ -34,3 +34,4 @@ resource "genesyscloud_routing_queue" "Queue" {
     enable_auto_answer        = false
   }
 }
+
