@@ -11,7 +11,6 @@ resource "genesyscloud_routing_queue" "Queue" {
   }
   media_settings_chat {
     enable_auto_answer        = false
-    enable_auto_dial_and_end  = false
     service_level_duration_ms = 20000
     service_level_percentage  = 0.8
     alerting_timeout_sec      = 30
@@ -21,17 +20,14 @@ resource "genesyscloud_routing_queue" "Queue" {
     service_level_percentage  = 0.8
     alerting_timeout_sec      = 30
     enable_auto_answer        = false
-    enable_auto_dial_and_end  = false
   }
   media_settings_call {
     service_level_percentage  = 0.8
     alerting_timeout_sec      = 8
     enable_auto_answer        = false
-    enable_auto_dial_and_end  = false
     service_level_duration_ms = 20000
   }
   media_settings_email {
-    enable_auto_dial_and_end  = false
     service_level_duration_ms = 86400000
     service_level_percentage  = 0.8
     alerting_timeout_sec      = 300
