@@ -1,5 +1,5 @@
 digitalBot:
-  name: Archy_support_bot_1
+  name: Archy_support_bot_Demo
   description: ""
   division: Home
   startUpRef: "/digitalBot/bots/bot[Initial Greeting_10]"
