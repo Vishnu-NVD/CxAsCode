@@ -1,5 +1,5 @@
 resource "genesyscloud_routing_queue" "Queue" {
-  name = "Example Queue_CICD_demo_4"
+  name = "Example Queue_CICD_demo_1"
   media_settings_callback {
     enable_auto_answer        = false
     mode                      = "AgentFirst"
