@@ -23,3 +23,4 @@ resource "genesyscloud_architect_datatable" "customers_1" {
   }
 }
 
+
