@@ -1,5 +1,5 @@
-resource "genesyscloud_architect_datatable" "customers_1" {
-  name        = "CI/CD_Customers_List"
+resource "genesyscloud_architect_datatable" "customers_2" {
+  name        = "CI/CD_Customers_List_v1"
   description = "Table of Customers"
   properties {
     name  = "key"
