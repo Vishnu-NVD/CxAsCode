@@ -56,3 +56,4 @@ resource "genesyscloud_user" "Arthur" {
     }
   }
 }
+
