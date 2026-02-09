@@ -1,7 +1,7 @@
 resource "genesyscloud_routing_queue" "Queue" {
-  name = "Example Queue_CICD_demo_3"
+  name = "Example Queue_CICD_demo_4"
   media_settings_callback {
-    enable_auto_answer        = true
+    enable_auto_answer        = false
     mode                      = "AgentFirst"
     alerting_timeout_sec      = 30
     auto_end_delay_seconds    = 300
@@ -10,7 +10,7 @@ resource "genesyscloud_routing_queue" "Queue" {
     auto_dial_delay_seconds   = 300
   }
   media_settings_chat {
-    enable_auto_answer        = true
+    enable_auto_answer        = false
     service_level_duration_ms = 20000
     service_level_percentage  = 0.8
     alerting_timeout_sec      = 30
