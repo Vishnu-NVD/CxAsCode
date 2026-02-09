@@ -6,10 +6,4 @@ resource "genesyscloud_architect_datatable_row" "dt_row" {
     "First"    = "John"
     "Last"        = "Smith"
   })
-  key_value    = "vishnu.m@servion.com"
-  properties_json = jsonencode({
-    "id" = 2750
-    "First"    = "Vishnu"
-    "Last"        = "M"
-  }) 
 }
